@@ -1,0 +1,58 @@
+<launch>
+    <param name="use_sim_time" value="false" />
+
+    <arg name="map_name" default=""/>
+    <arg name="load_map" default="true"/>
+
+    <!-- <node name="odom_to_imu" pkg="ros_utils" type="odom_to_imu" output="screen">
+        <remap from="/odom"                  to="/bebop/odom"/>
+        <remap from="/imu"                  to="/bebop/imu"/>
+    </node> -->
+
+    <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0 0.621, 0.578, -0.361, 0.388 world odom" /> -->
+
+
+    <!-- Main node -->
+    <!-- <node name="orb_slam3_mono" pkg="orb_slam3_ros_wrapper" type="orb_slam3_ros_wrapper_mono" output="screen"> -->
+
+    <node name="orb_slam3" pkg="orb_slam3_ros" type="ros_mono" output="screen">
+        <!-- change the topics according to the dataset -->
+        <remap from="/camera/image_raw"     to="/bebop/image_raw"/>
+        <!-- <remap from="/imu"                  to="/bebop/imu"/> -->
+
+
+        <!-- <param name="voc_file"      type="string"   value="$(find orb_slam3_ros_wrapper)/config/ORBvoc.txt" />
+        <param name="settings_file" type="string"   value="$(find orb_slam3_ros_wrapper)/config/EuRoC.yaml" /> -->
+
+        <!-- Parameters for original ORB-SLAM3 -->
+        <param name="map_name" type="string" value="$(arg map_name)" />
+        <param name="voc_file"      type="string" value="$(find orb_slam3_ros)/orb_slam3/Vocabulary/ORBvoc.txt.bin"/>
+        <param name="settings_file" type="string" value="$(find odom_slam_sensor_fusion)/config/bebop2_imu.yaml"/>
+
+
+
+        <!-- static parameters -->
+        <!-- <param name="load_map" type="bool" value="$(arg load_map)" /> -->
+        <!-- <param name="/System/LoadAtlasFromFile" type="string" value="$(arg map_file)" /> -->
+
+        <!-- Parameters for ROS -->
+        <param name="world_frame_id"    type="string"   value="slam" />
+        <param name="cam_frame_id"      type="string"   value="camera" />
+        <!-- <param name="imu_frame_id"      type="string"   value="imu" /> -->
+        
+        <param name="enable_pangolin"   type="bool"     value="$(eval arg('map_name') == '')"/>
+    </node>
+    
+    <!-- Visualization -->
+    <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find orb_slam3_ros)/config/orb_slam3_with_imu.rviz" output="screen" /> -->
+    
+
+
+    <!-- Trajectory path -->
+    <!-- <node pkg="hector_trajectory_server" type="hector_trajectory_server" name="trajectory_server_orb_slam3" output="screen" ns="orb_slam3_ros" >
+        <param name="/target_frame_name" value="slam" />
+        <param name="/source_frame_name" value="camera" />
+        <param name="/trajectory_update_rate" value="20.0" />
+        <param name="/trajectory_publish_rate" value="20.0" />
+    </node> -->
+</launch>
